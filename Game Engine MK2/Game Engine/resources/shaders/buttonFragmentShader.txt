@@ -1,0 +1,21 @@
+#version 450 core
+
+in vec2 fragTexCoord;
+
+out vec4 color;
+
+uniform sampler2D tex;
+uniform bool stencil;
+uniform vec3 colorStencil;
+
+void main(void)
+{    	
+	if (stencil == true)
+	{
+		color = vec4(colorStencil,1.0);
+	}
+	else
+	{
+		color = texture(tex, (fragTexCoord));
+	}
+}
