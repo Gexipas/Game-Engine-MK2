@@ -50,6 +50,15 @@
     <ClInclude Include="3Dshapes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Perlin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="resources\shaders\cubeFragmentShader.txt">
@@ -68,6 +77,21 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="resources\shaders\buttonVertexShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\3DFragmentShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\3DVertexShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\GrassFragmentShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\GrassGeometryShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\GrassVertexShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

@@ -60,7 +60,7 @@ public:
     glm::mat4 cameraMatrix()
     {
         // View Matrix
-        glm::mat4 view = GetViewMatrix();
+        //glm::mat4 view = GetViewMatrix();
 
         // Projection Matrix	
         float halfScreenWidth = (float)SCR_WIDTH * 0.5f;
@@ -75,7 +75,7 @@ public:
         // Perspective Matrix
         glm::mat4 proj = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 10000.0f);
 
-        return (proj * view);
+        return (proj);
     }
 
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

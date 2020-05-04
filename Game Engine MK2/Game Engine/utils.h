@@ -10,8 +10,8 @@
 // Types
 
 // Constants
-const unsigned int SCR_WIDTH = (unsigned int)1920/1.5;
-const unsigned int SCR_HEIGHT = (unsigned int)1080/1.5;
+const unsigned int SCR_WIDTH = (unsigned int)1920/2;
+const unsigned int SCR_HEIGHT = (unsigned int)1080/2;
 
 
 #endif   // __UTILS_H__

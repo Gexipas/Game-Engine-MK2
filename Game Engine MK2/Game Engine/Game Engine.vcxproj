@@ -134,18 +134,26 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="cube.h" />
     <ClInclude Include="cubeMap.h" />
+    <ClInclude Include="Mesh3D.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="modelMesh.h" />
+    <ClInclude Include="Perlin.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="resources\shaders\3DFragmentShader.txt" />
+    <Text Include="resources\shaders\3DVertexShader.txt" />
     <Text Include="resources\shaders\buttonFragmentShader.txt" />
     <Text Include="resources\shaders\buttonVertexShader.txt" />
     <Text Include="resources\shaders\cubeFragmentShader.txt" />
     <Text Include="resources\shaders\cubeVertexShader.txt" />
     <Text Include="resources\shaders\fogFragmentShader.txt" />
     <Text Include="resources\shaders\fogVertexShader.txt" />
+    <Text Include="resources\shaders\GrassFragmentShader.txt" />
+    <Text Include="resources\shaders\GrassGeometryShader.txt" />
+    <Text Include="resources\shaders\GrassVertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

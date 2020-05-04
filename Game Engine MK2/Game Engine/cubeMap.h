@@ -3,6 +3,13 @@
 #ifndef CUBEMAP_H
 #define CUBEMAP_H
 
+#include <vector>
+#include <string>
+
+#include "shader.h"
+#include "camera.h"
+#include "stb_image.h"
+
 float cubeMapVertices[] = {
     // positions          
     -1.0f,  1.0f, -1.0f,
@@ -94,7 +101,7 @@ private:
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
         // load textures
-        vector<std::string> faces
+        std::vector<std::string> faces
         {
             "resources/textures/CubeMap/sh_right.jpg",
             "resources/textures/CubeMap/sh_left.jpg",
@@ -108,7 +115,7 @@ private:
         projection = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 	}
 
-    unsigned int loadCubemap(vector<std::string> faces)
+    unsigned int loadCubemap(std::vector<std::string> faces)
     {
         unsigned int textureID;
         glGenTextures(1, &textureID);

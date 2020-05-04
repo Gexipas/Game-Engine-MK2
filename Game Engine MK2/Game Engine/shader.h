@@ -41,12 +41,29 @@ public:
 			strncat_s(fragmentShaderFilename, shaderFilename, sizeof(fragmentShaderFilename));
 			strncat_s(fragmentShaderFilename, "FragmentShader.txt", sizeof(fragmentShaderFilename));
 
+			char geometryShaderFilename[256];
+			strncpy_s(geometryShaderFilename, "resources/shaders/", sizeof(geometryShaderFilename));
+			strncat_s(geometryShaderFilename, shaderFilename, sizeof(geometryShaderFilename));
+			strncat_s(geometryShaderFilename, "GeometryShader.txt", sizeof(geometryShaderFilename));
+
 			GLuint vertex = createShader(GL_VERTEX_SHADER, vertexShaderFilename);
 			GLuint fragment = createShader(GL_FRAGMENT_SHADER, fragmentShaderFilename);
+			GLuint geometry;
+
+			bool GeometryBool = false;
+			if (FILE* file = fopen(geometryShaderFilename, "r")) {
+				fclose(file);
+				GeometryBool = true;
+				geometry = createShader(GL_GEOMETRY_SHADER, geometryShaderFilename);
+			}
 
 			shaderID = glCreateProgram();
 			glAttachShader(shaderID, vertex);
 			glAttachShader(shaderID, fragment);
+			if (GeometryBool)
+			{
+				glAttachShader(shaderID, geometry);
+			}
 			glLinkProgram(shaderID);
 
 			// Check for link errors
