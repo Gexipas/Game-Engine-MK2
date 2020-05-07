@@ -17,18 +17,25 @@ public:
 	Mesh3D() {}
 	~Mesh3D() {}
 
-	void Render();
+    void Draw();
+    void Render();
 
 	void SetupMesh();
 	
 	Shader program;
-    Shader grass = Shader("Grass");
 	unsigned int VAO, texture;
 	std::vector<GLuint> indices;
 	std::vector<vert> vertices;
     std::string m_texturePath;
     glm::vec3 m_position = glm::vec3(0);
 };
+
+inline void Mesh3D::Draw()
+{
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}
 
 inline void Mesh3D::Render()
 {
@@ -37,8 +44,8 @@ inline void Mesh3D::Render()
     glBindTexture(GL_TEXTURE_2D, texture);
 
 
-    glm::mat4 view = Camera::instance().GetViewMatrix();
-    glm::mat4 projection = Camera::instance().cameraMatrix();
+    glm::mat4 view = Camera::instance().CameraViewMatrix();
+    glm::mat4 projection = Camera::instance().CameraProjMatrix();
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, m_position);
@@ -48,24 +55,9 @@ inline void Mesh3D::Render()
     program.setMat4("view", view);
     program.setMat4("model", model);
 
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
+    Draw();
 
-    glUseProgram(0);
-
-    // grass
-    grass.use();
-
-    grass.setMat4("projection", projection);
-    grass.setMat4("view", view);
-    grass.setMat4("model", model);
-
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-
-    glUseProgram(0);
+    glUseProgram(0);    
 }
 
 inline void Mesh3D::SetupMesh()
@@ -129,6 +121,6 @@ inline void Mesh3D::SetupMesh()
     }
     stbi_image_free(data);
     program.use();
-    program.setInt("tex", 0);
+    program.setInt("Texture", 0);
 
 }

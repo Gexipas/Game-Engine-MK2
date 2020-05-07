@@ -139,6 +139,7 @@
     <ClInclude Include="modelMesh.h" />
     <ClInclude Include="Perlin.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -154,6 +155,8 @@
     <Text Include="resources\shaders\GrassFragmentShader.txt" />
     <Text Include="resources\shaders\GrassGeometryShader.txt" />
     <Text Include="resources\shaders\GrassVertexShader.txt" />
+    <Text Include="resources\shaders\ShadowFragmentShader.txt" />
+    <Text Include="resources\shaders\ShadowVertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

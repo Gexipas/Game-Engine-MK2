@@ -69,7 +69,7 @@ public:
 	{
         glDepthFunc(GL_LEQUAL);  
         skyboxShader.use();
-        view = glm::mat4(glm::mat3(Camera::instance().GetViewMatrix())); 
+        view = glm::mat4(glm::mat3(Camera::instance().CameraViewMatrix())); 
         skyboxShader.setMat4("view", view);
         skyboxShader.setMat4("projection", projection);
         
@@ -112,7 +112,7 @@ private:
         };
         cubemapTexture = loadCubemap(faces);
         skyboxShader = Shader("cube");
-        projection = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        projection = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 10000.0f);
 	}
 
     unsigned int loadCubemap(std::vector<std::string> faces)

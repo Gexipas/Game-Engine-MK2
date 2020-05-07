@@ -115,7 +115,7 @@ public:
     bool m_active = false;
     bool pointCollision(glm::vec2 _point)
     {
-        glm::mat4 pv = Camera::instance().cameraMatrix();
+        glm::mat4 pv = Camera::instance().CameraProjMatrix();
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(m_position, m_z));
@@ -220,7 +220,7 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
 
-        glm::mat4 pv = Camera::instance().cameraMatrix();
+        glm::mat4 pv = Camera::instance().CameraProjMatrix();
 
         glEnable(GL_STENCIL_TEST);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -356,7 +356,7 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
 
-        glm::mat4 pv = Camera::instance().cameraMatrix();
+        glm::mat4 pv = Camera::instance().CameraProjMatrix();
 
 
         //normal object
@@ -462,7 +462,7 @@ public:
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
 
-        glm::mat4 pv = Camera::instance().cameraMatrix();
+        glm::mat4 pv = Camera::instance().CameraProjMatrix();
 
 
         //normal object
