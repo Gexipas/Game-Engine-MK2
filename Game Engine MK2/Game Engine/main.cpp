@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "cubeMap.h"
 #include "Terrain.h"
+#include "Cube.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -33,13 +34,52 @@ bool bToggle = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
+Cube* cuba;
 Terrain* terra;
+Shader program3D;
+Shader programShadow;
+
+// shadows
+glm::vec3 lightPos(0.0f,0.0f, -2.0f);
+const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+unsigned int depthMapFBO;
+unsigned int depthMap;
 
 int main()
 {
 	GLFWwindow* window = InitWindow();
 
 	terra = new Terrain(100.0f,100.0f,200,200);
+	cuba = new Cube(glm::vec3(10.0f,3.0f, 10.0f));
+	programShadow = Shader("Shadow");
+	program3D = Shader("3D");
+	program3D.use();
+	program3D.setInt("Texture", 0);
+	program3D.setInt("ShadowMap", 1);
+	glUseProgram(0);
+
+	// configure depth map FBO
+	// -----------------------
+	
+	
+	glGenFramebuffers(1, &depthMapFBO);
+	// create depth texture
+	
+	glGenTextures(1, &depthMap);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+	// attach depth texture as FBO's depth buffer
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		
 	// render loop
 	while (!glfwWindowShouldClose(window))
@@ -95,14 +135,55 @@ void processUpdate(GLFWwindow* window)
 void processRender(GLFWwindow* window)
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glEnable(GL_CULL_FACE);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glCullFace(GL_FRONT);
+	programShadow.use();
+	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 20.0f);
+	glm::mat4 lightView = glm::lookAt(Camera::instance().Position, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 lightVPMatrix = lightProjection * lightView;
+	programShadow.setMat4("lightVPMatrix", lightVPMatrix);
+
+	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	terra->Render(programShadow);
+	cuba->Render(programShadow);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glUseProgram(0);
+	glCullFace(GL_BACK);
+	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
 	//glEnable(GL_MULTISAMPLE);
-	//glEnable(GL_CULL_FACE);
+	
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	cubeMap::instance().Render();
+	
+	// main Render
+	program3D.use();
+	glm::mat4 projection = Camera::instance().CameraProjMatrix();
+	glm::mat4 view = Camera::instance().CameraViewMatrix();
+	program3D.setMat4("projection", projection);
+	program3D.setMat4("view", view);
 
-	cubeMap::instance().Render();	
-	terra->Render();
+	program3D.setMat4("lightVPMatrix", lightVPMatrix);
+	program3D.setVec3("cameraPos",Camera::instance().Position);
+	program3D.setVec3("lightPos", lightPos);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+		
+	terra->Render(program3D);
+	cuba->Render(program3D);
+
+	glUseProgram(0);
+	// Render End
 
 	//glDisable(GL_CULL_FACE);
 	//glDisable(GL_BLEND);

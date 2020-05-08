@@ -13,7 +13,7 @@ class Terrain : public Mesh3D
 {
 public:
     Terrain(float _width, float _height, int _cellCountX, int _cellCountY);
-    void Render();
+    void Render(Shader _program);
 private:
     void createTerrain();
     void smoothTerrain();
@@ -21,8 +21,6 @@ private:
 
     float m_width, m_height;
     int m_cellCountX, m_cellCountY;
-
-    Shader grass = Shader("Grass");
     std::vector<std::vector<float>> m_heightMap;
 };
 
@@ -33,7 +31,7 @@ inline Terrain::Terrain(float _width, float _height, int _cellCountX, int _cellC
     m_position = glm::vec3(-m_width / 2.0f, 0.0f, -m_height / 2.0f);
     m_cellCountX = _cellCountX;
     m_cellCountY = _cellCountY;
-    m_heightMap = Perlin::GetInstance().createNoise(m_cellCountX, m_cellCountY, 10, 1.4f);
+    m_heightMap = Perlin::GetInstance().createNoise(m_cellCountX, m_cellCountY, 0, 1.4f);
 
     for (int i = 0; i < 15; i++)
     {
@@ -41,67 +39,12 @@ inline Terrain::Terrain(float _width, float _height, int _cellCountX, int _cellC
     }
     createTerrain();
 
-    m_texturePath = "sh_bottom.jpg";
-    SetupMesh();
-    program = Shader("3D");
+    SetupMesh("sh_bottom.jpg");
 }
 
-inline void Terrain::Render()
+inline void Terrain::Render(Shader _program)
 {
-    // shadow pass
-    ShadowMap::GetInstance().ShadowMapStart();
-
-    ShadowMap::GetInstance().ShadowPass();
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, m_position);
-
-    ShadowMap::GetInstance().ShadowProgram.setMat4("model", model);
-
-    Draw();
-
-    glUseProgram(0);
-
-    ShadowMap::GetInstance().ShadowMapEnd();
-
-    program.use();
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, ShadowMap::GetInstance().depthMapTexture);
-
-    program.setInt("ShadowMap", 1);
-
-    glm::mat4 view = Camera::instance().CameraViewMatrix();
-    glm::mat4 projection = Camera::instance().CameraProjMatrix();
-
-    //glm::mat4 model = glm::mat4(1.0f);
-    //model = glm::translate(model, m_position);
-
-
-    program.setMat4("lightVPMatrix", ShadowMap::GetInstance().lightVPMatrix);
-    program.setMat4("projection", projection);
-    program.setMat4("view", view);
-    program.setMat4("model", model);
-
-    program.setVec3("cameraPos", Camera::instance().Position);
-    program.setVec3("lightPos", ShadowMap::GetInstance().lightPosition);
-
-    Draw();
-
-    glUseProgram(0);
-
-    // grass
-    //grass.use();
-    //
-    //grass.setMat4("projection", projection);
-    //grass.setMat4("view", view);
-    //grass.setMat4("model", model);
-    //
-    //Draw();
-    //
-    //glUseProgram(0);
+    Draw(_program);
 }
 
 inline void Terrain::createTerrain()

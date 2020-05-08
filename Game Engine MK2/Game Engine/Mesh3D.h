@@ -17,50 +17,31 @@ public:
 	Mesh3D() {}
 	~Mesh3D() {}
 
-    void Draw();
-    void Render();
-
-	void SetupMesh();
+    void Draw(Shader _program);
+	void SetupMesh(const char* _texturePath);
 	
-	Shader program;
 	unsigned int VAO, texture;
 	std::vector<GLuint> indices;
 	std::vector<vert> vertices;
-    std::string m_texturePath;
     glm::vec3 m_position = glm::vec3(0);
 };
 
-inline void Mesh3D::Draw()
+inline void Mesh3D::Draw(Shader _program)
 {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, m_position);
+
+    _program.setMat4("model", model);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 
-inline void Mesh3D::Render()
-{
-    program.use();
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-
-    glm::mat4 view = Camera::instance().CameraViewMatrix();
-    glm::mat4 projection = Camera::instance().CameraProjMatrix();
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, m_position);
-
-
-    program.setMat4("projection", projection);
-    program.setMat4("view", view);
-    program.setMat4("model", model);
-
-    Draw();
-
-    glUseProgram(0);    
-}
-
-inline void Mesh3D::SetupMesh()
+inline void Mesh3D::SetupMesh(const char* _texturePath)
 {
     unsigned int VBO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -88,7 +69,7 @@ inline void Mesh3D::SetupMesh()
     glBindVertexArray(0);
 
     std::string totalPath = ".//resources//textures//";
-    totalPath.append(m_texturePath);
+    totalPath.append(_texturePath);
     char const* path = totalPath.c_str();
 
     glGenTextures(1, &texture);
@@ -120,7 +101,4 @@ inline void Mesh3D::SetupMesh()
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
-    program.use();
-    program.setInt("Texture", 0);
-
 }
