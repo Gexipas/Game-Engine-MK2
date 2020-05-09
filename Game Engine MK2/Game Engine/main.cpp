@@ -12,6 +12,7 @@
 #include "cubeMap.h"
 #include "Terrain.h"
 #include "Cube.h"
+#include "model.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -36,11 +37,15 @@ float lastFrame = 0.0f;
 
 Cube* cuba;
 Terrain* terra;
+//Model* test;
+
+
 Shader program3D;
 Shader programShadow;
+Shader programGrass;
 
 // shadows
-glm::vec3 lightPos(0.0f,0.0f, -2.0f);
+glm::vec3 lightPos(-2.0f,5.0f, -2.0f);
 const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
 unsigned int depthMapFBO;
 unsigned int depthMap;
@@ -50,9 +55,13 @@ int main()
 	GLFWwindow* window = InitWindow();
 
 	terra = new Terrain(100.0f,100.0f,200,200);
-	cuba = new Cube(glm::vec3(10.0f,3.0f, 10.0f));
+	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
+	//test = new Model("./resources/objects/nanosuit/nanosuit.obj");
+
 	programShadow = Shader("Shadow");
 	program3D = Shader("3D");
+	programGrass = Shader("Grass");
+
 	program3D.use();
 	program3D.setInt("Texture", 0);
 	program3D.setInt("ShadowMap", 1);
@@ -141,7 +150,7 @@ void processRender(GLFWwindow* window)
 	glCullFace(GL_FRONT);
 	programShadow.use();
 	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 20.0f);
-	glm::mat4 lightView = glm::lookAt(Camera::instance().Position, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 lightVPMatrix = lightProjection * lightView;
 	programShadow.setMat4("lightVPMatrix", lightVPMatrix);
 
@@ -164,11 +173,20 @@ void processRender(GLFWwindow* window)
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	cubeMap::instance().Render();
+
+	glm::mat4 projection = Camera::instance().CameraProjMatrix();
+	glm::mat4 view = Camera::instance().CameraViewMatrix();
+
+	// Grass
+	//programGrass.use();
+	//programGrass.setMat4("projection", projection);
+	//programGrass.setMat4("view", view);
+	//terra->Render(programGrass);
+	//glUseProgram(0);
 	
 	// main Render
 	program3D.use();
-	glm::mat4 projection = Camera::instance().CameraProjMatrix();
-	glm::mat4 view = Camera::instance().CameraViewMatrix();
+	
 	program3D.setMat4("projection", projection);
 	program3D.setMat4("view", view);
 
@@ -183,6 +201,8 @@ void processRender(GLFWwindow* window)
 	cuba->Render(program3D);
 
 	glUseProgram(0);
+
+	
 	// Render End
 
 	//glDisable(GL_CULL_FACE);

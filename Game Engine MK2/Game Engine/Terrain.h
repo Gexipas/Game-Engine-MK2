@@ -31,7 +31,7 @@ inline Terrain::Terrain(float _width, float _height, int _cellCountX, int _cellC
     m_position = glm::vec3(-m_width / 2.0f, 0.0f, -m_height / 2.0f);
     m_cellCountX = _cellCountX;
     m_cellCountY = _cellCountY;
-    m_heightMap = Perlin::GetInstance().createNoise(m_cellCountX, m_cellCountY, 0, 1.4f);
+    m_heightMap = Perlin::GetInstance().createNoise(m_cellCountX, m_cellCountY, 10, 1.4f);
 
     for (int i = 0; i < 15; i++)
     {

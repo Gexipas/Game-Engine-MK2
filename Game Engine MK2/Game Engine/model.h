@@ -38,6 +38,7 @@ public:
 	// Draws the model, and thus all its meshes
 	void Render(GLuint program)
 	{
+
 		for (GLuint i = 0; i < this->meshes.size(); i++) {
 
 			//printf("mesh size: %d \n", meshes.size());
@@ -47,6 +48,7 @@ public:
 	}
 
 private:
+	glm::vec3 m_position = { 0,0,0 };
 	/*  Model Data  */
 	vector<ModelMesh> meshes;
 	string directory;

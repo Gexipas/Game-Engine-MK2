@@ -50,8 +50,6 @@ public:
 	// Render the mesh
 	void Render(GLuint program)
 	{
-		glUseProgram(program);
-
 		// Bind appropriate textures
 		GLuint diffuseNr = 1;
 		GLuint specularNr = 1;
