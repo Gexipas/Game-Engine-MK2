@@ -120,18 +120,48 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
+	float speed = 0.05f;
+	glm::vec2 dir = { 0.0f,0.0f };
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		Camera::instance().ProcessKeyboard(FORWARD, deltaTime);
+	{
+		//Camera::instance().ProcessKeyboard(FORWARD, deltaTime);
+		dir.y += 1;
+	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		Camera::instance().ProcessKeyboard(BACKWARD, deltaTime);
+	{
+		//Camera::instance().ProcessKeyboard(BACKWARD, deltaTime);
+		dir.y -= 1;
+	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		Camera::instance().ProcessKeyboard(LEFT, deltaTime);
+	{
+		//Camera::instance().ProcessKeyboard(LEFT, deltaTime);
+		dir.x -= 1;
+	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		Camera::instance().ProcessKeyboard(RIGHT, deltaTime);
+	{
+		//Camera::instance().ProcessKeyboard(RIGHT, deltaTime);
+		dir.x += 1;
+	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-		Camera::instance().ProcessKeyboard(UP, deltaTime);
+	{
+		//Camera::instance().ProcessKeyboard(UP, deltaTime);
+	}
 	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		Camera::instance().ProcessKeyboard(DOWN, deltaTime);
+	{
+		//Camera::instance().ProcessKeyboard(DOWN, deltaTime);
+	}
+	if (!(dir.x == 0 && dir.y == 0))
+	{
+		glm::vec3 v = Camera::instance().Position + glm::normalize(Camera::instance().Front * dir.y + Camera::instance().Right * dir.x)*speed;
+		
+		Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0,1,0);
+		if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
+		if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
+		if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
+		if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
+		
+	}
 }
 
 void processUpdate(GLFWwindow* window)
@@ -139,6 +169,8 @@ void processUpdate(GLFWwindow* window)
 	float currentFrame = static_cast<float>(glfwGetTime());
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
+
+
 	
 }
 
@@ -146,6 +178,7 @@ void processRender(GLFWwindow* window)
 {
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glEnable(GL_CULL_FACE);
+	glEnable(GL_MULTISAMPLE);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glCullFace(GL_FRONT);
@@ -169,7 +202,7 @@ void processRender(GLFWwindow* window)
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	//glEnable(GL_MULTISAMPLE);
+	
 	
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -178,12 +211,14 @@ void processRender(GLFWwindow* window)
 	glm::mat4 projection = Camera::instance().CameraProjMatrix();
 	glm::mat4 view = Camera::instance().CameraViewMatrix();
 	glm::mat4 pv = projection * view;
+
 	// Grass
-	//programGrass.use();
-	//programGrass.setMat4("projection", projection);
-	//programGrass.setMat4("view", view);
-	//terra->Render(programGrass);
-	//glUseProgram(0);
+	glDisable(GL_CULL_FACE);
+	programGrass.use();
+	programGrass.setMat4("pv", pv);
+	terra->Render(programGrass);
+	glUseProgram(0);
+	glEnable(GL_CULL_FACE);
 	
 	// main Render
 	program3D.use();
@@ -278,7 +313,7 @@ GLFWwindow* InitWindow()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	//glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	// glfw window creation
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "OpenGL - Ethan Griffin", NULL, NULL);
 	if (window == NULL)

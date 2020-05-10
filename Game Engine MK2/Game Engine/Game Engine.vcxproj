@@ -156,6 +156,8 @@
     <Text Include="resources\shaders\fogVertexShader.txt" />
     <Text Include="resources\shaders\GrassFragmentShader.txt" />
     <Text Include="resources\shaders\GrassGeometryShader.txt" />
+    <Text Include="resources\shaders\GrassTessControlShader.txt" />
+    <Text Include="resources\shaders\GrassTessEvalShader.txt" />
     <Text Include="resources\shaders\GrassVertexShader.txt" />
     <Text Include="resources\shaders\ShadowFragmentShader.txt" />
     <Text Include="resources\shaders\ShadowTessControlShader.txt" />

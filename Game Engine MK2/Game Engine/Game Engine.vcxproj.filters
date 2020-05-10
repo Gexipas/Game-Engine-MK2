@@ -115,5 +115,11 @@
     <Text Include="resources\shaders\ShadowTessEvalShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="resources\shaders\GrassTessControlShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\GrassTessEvalShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
