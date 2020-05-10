@@ -30,6 +30,7 @@ float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 bool bToggle = true;
+bool bfullscreen = true;
 
 // timing
 float deltaTime = 0.0f;
@@ -176,7 +177,7 @@ void processRender(GLFWwindow* window)
 
 	glm::mat4 projection = Camera::instance().CameraProjMatrix();
 	glm::mat4 view = Camera::instance().CameraViewMatrix();
-
+	glm::mat4 pv = projection * view;
 	// Grass
 	//programGrass.use();
 	//programGrass.setMat4("projection", projection);
@@ -187,8 +188,7 @@ void processRender(GLFWwindow* window)
 	// main Render
 	program3D.use();
 	
-	program3D.setMat4("projection", projection);
-	program3D.setMat4("view", view);
+	program3D.setMat4("pv", pv);
 
 	program3D.setMat4("lightVPMatrix", lightVPMatrix);
 	program3D.setVec3("cameraPos",Camera::instance().Position);
@@ -226,7 +226,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
-		
+
 	}
 }
 
@@ -273,6 +273,7 @@ GLFWwindow* InitWindow()
 		exit(-1);
 	}
 
+
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -286,6 +287,10 @@ GLFWwindow* InitWindow()
 		glfwTerminate();
 		return nullptr;
 	}
+
+	//fullscreen
+	//glfwSetWindowMonitor(window, bfullscreen ? glfwGetPrimaryMonitor() : NULL, 0, 0, SCR_WIDTH, SCR_HEIGHT, GLFW_DONT_CARE);
+
 	glfwMakeContextCurrent(window);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);

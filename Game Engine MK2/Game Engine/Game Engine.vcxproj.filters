@@ -103,5 +103,17 @@
     <Text Include="resources\shaders\ShadowVertexShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="resources\shaders\3DTessControlShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\3DTessEvalShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\ShadowTessControlShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\ShadowTessEvalShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -56,21 +56,31 @@ void main(void)
 	vec3 color = texture(Texture, TexCoord).rgb;
     vec3 normal = normalize(Normal);
     vec3 lightColor = vec3(1.0);
+
     // ambient
     vec3 ambient = 0.5 * color;
+
     // diffuse
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(lightDir, normal), 0.0);
     vec3 diffuse = diff * lightColor;
+
     // specular
     vec3 viewDir = normalize(cameraPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = 0.0;
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
-    vec3 specular = spec * lightColor;    
+    vec3 specular = spec * lightColor;   
+    
     // calculate shadow
-    float shadow = ShadowCalculation(FragPosLightSpace);                      
+    float shadow = ShadowCalculation(FragPosLightSpace);        
+    
+    // fog
+    float d = distance(FragPos.xyz, cameraPos);
+    float lerp = d/50.f;
+    lerp = clamp(lerp, 0.0, 1.0);//(1-lerp) * vec3(1);//
+
     vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
     
     fragColor = vec4(lighting, 1.0);

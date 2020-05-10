@@ -45,10 +45,22 @@ public:
 			strncpy_s(geometryShaderFilename, "resources/shaders/", sizeof(geometryShaderFilename));
 			strncat_s(geometryShaderFilename, shaderFilename, sizeof(geometryShaderFilename));
 			strncat_s(geometryShaderFilename, "GeometryShader.txt", sizeof(geometryShaderFilename));
+			
+			char tessControlShaderFilename[256];
+			strncpy_s(tessControlShaderFilename, "resources/shaders/", sizeof(tessControlShaderFilename));
+			strncat_s(tessControlShaderFilename, shaderFilename, sizeof(tessControlShaderFilename));
+			strncat_s(tessControlShaderFilename, "TessControlShader.txt", sizeof(tessControlShaderFilename));
+
+			char tessEvalShaderFilename[256];
+			strncpy_s(tessEvalShaderFilename, "resources/shaders/", sizeof(tessEvalShaderFilename));
+			strncat_s(tessEvalShaderFilename, shaderFilename, sizeof(tessEvalShaderFilename));
+			strncat_s(tessEvalShaderFilename, "TessEvalShader.txt", sizeof(tessEvalShaderFilename));
 
 			GLuint vertex = createShader(GL_VERTEX_SHADER, vertexShaderFilename);
 			GLuint fragment = createShader(GL_FRAGMENT_SHADER, fragmentShaderFilename);
 			GLuint geometry;
+			GLuint tessControl;
+			GLuint tessEval;
 
 			bool GeometryBool = false;
 			if (FILE* file = fopen(geometryShaderFilename, "r")) {
@@ -57,12 +69,34 @@ public:
 				geometry = createShader(GL_GEOMETRY_SHADER, geometryShaderFilename);
 			}
 
+			bool TessControlBool = false;
+			if (FILE* file = fopen(tessControlShaderFilename, "r")) {
+				fclose(file);
+				TessControlBool = true;
+				tessControl = createShader(GL_TESS_CONTROL_SHADER, tessControlShaderFilename);
+			}
+
+			bool TessEvalBool = false;
+			if (FILE* file = fopen(tessEvalShaderFilename, "r")) {
+				fclose(file);
+				TessEvalBool = true;
+				tessEval = createShader(GL_TESS_EVALUATION_SHADER, tessEvalShaderFilename);
+			}
+
 			shaderID = glCreateProgram();
 			glAttachShader(shaderID, vertex);
 			glAttachShader(shaderID, fragment);
 			if (GeometryBool)
 			{
 				glAttachShader(shaderID, geometry);
+			}
+			if (TessControlBool)
+			{
+				glAttachShader(shaderID, tessControl);
+			}
+			if (TessEvalBool)
+			{
+				glAttachShader(shaderID, tessEval);
 			}
 			glLinkProgram(shaderID);
 

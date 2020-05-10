@@ -21,7 +21,6 @@ public:
 	void SetupMesh(const char* _texturePath);
 	
 	unsigned int VAO, texture;
-	std::vector<GLuint> indices;
 	std::vector<vert> vertices;
     glm::vec3 m_position = glm::vec3(0);
 };
@@ -37,25 +36,21 @@ inline void Mesh3D::Draw(Shader _program)
     _program.setMat4("model", model);
 
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawArrays(GL_PATCHES, 0, vertices.size());
     glBindVertexArray(0);
 }
 
 inline void Mesh3D::SetupMesh(const char* _texturePath)
 {
-    unsigned int VBO, EBO;
+    unsigned int VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
 
     glBindVertexArray(VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vert), &vertices[0], GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), &indices[0], GL_STATIC_DRAW);
-
+    
     // position attribute
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vert), (GLvoid*)0);

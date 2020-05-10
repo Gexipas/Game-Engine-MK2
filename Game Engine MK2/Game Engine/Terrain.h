@@ -18,6 +18,7 @@ private:
     void createTerrain();
     void smoothTerrain();
     glm::vec3 getNormal(int x, int y);
+    vert getVert(int x, int y);
 
     float m_width, m_height;
     int m_cellCountX, m_cellCountY;
@@ -31,7 +32,7 @@ inline Terrain::Terrain(float _width, float _height, int _cellCountX, int _cellC
     m_position = glm::vec3(-m_width / 2.0f, 0.0f, -m_height / 2.0f);
     m_cellCountX = _cellCountX;
     m_cellCountY = _cellCountY;
-    m_heightMap = Perlin::GetInstance().createNoise(m_cellCountX, m_cellCountY, 10, 1.4f);
+    m_heightMap = Perlin::GetInstance().createNoise(m_cellCountX, m_cellCountY, 0, 1.4f);
 
     for (int i = 0; i < 15; i++)
     {
@@ -49,28 +50,17 @@ inline void Terrain::Render(Shader _program)
 
 inline void Terrain::createTerrain()
 {
-    for (unsigned int i = 0; i < m_heightMap.size(); i++)
-    {
-        for (unsigned int j = 0; j < m_heightMap[i].size(); j++)
-        {
-            vert temp;
-            temp.position = glm::vec3((float)j/ m_heightMap[i].size()*m_width, m_heightMap[i][j], (float)i/ m_heightMap.size()*m_height);
-            temp.tex = glm::vec2((float)j / (float)m_heightMap[i].size(), (float)i / (float)m_heightMap.size());
-            temp.normal = getNormal(j, i);
-            vertices.push_back(temp);
-        }
-    }
     for (unsigned int i = 0; i < m_heightMap.size() - 1; i++)
     {
         for (unsigned int j = 0; j < m_heightMap[i].size() - 1; j++)
         {
-            indices.push_back(i * (int)m_heightMap[i].size() + j);
-            indices.push_back((i + 1) * (int)m_heightMap[i].size() + j + 1);
-            indices.push_back((i)* (int)m_heightMap[i].size() + j + 1);
+            vertices.push_back(getVert(i, j));
+            vertices.push_back(getVert(i + 1, j + 1));
+            vertices.push_back(getVert(i, j + 1));
 
-            indices.push_back((i)* (int)m_heightMap[i].size() + j);
-            indices.push_back((i + 1) * (int)m_heightMap[i].size() + j);
-            indices.push_back((i + 1) * (int)m_heightMap[i].size() + j + 1);
+            vertices.push_back(getVert(i, j));
+            vertices.push_back(getVert(i + 1, j));
+            vertices.push_back(getVert(i + 1, j + 1));
         }
     }
 }
@@ -168,4 +158,13 @@ inline glm::vec3 Terrain::getNormal(int x, int y)
         (2 * (Yleft - Yright) + Yupleft - Ydownright - Yup + Ydown) / ax, 
         6,
         (2 * (Ydown - Yup) - Yupleft - Ydownright + Yup + Yleft) / ay));
+}
+
+inline vert Terrain::getVert(int x, int y)
+{
+    vert temp;
+    temp.position = glm::vec3((float)x / m_heightMap[y].size() * m_width, m_heightMap[y][x], (float)y / m_heightMap.size() * m_height);
+    temp.tex = glm::vec2((float)x / (float)m_heightMap[y].size(), (float)y / (float)m_heightMap.size());
+    temp.normal = getNormal(x, y);
+    return temp;
 }
