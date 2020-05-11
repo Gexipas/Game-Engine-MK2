@@ -29,8 +29,10 @@ void processRender(GLFWwindow* window);
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
-bool bToggle = true;
-bool bfullscreen = true;
+bool bLineRender = true;
+bool bFullscreen = true;
+bool bGrass = false;
+bool bCamera = false;
 
 // timing
 float deltaTime = 0.0f;
@@ -120,48 +122,67 @@ void processInput(GLFWwindow *window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	float speed = 0.05f;
+	float speed = 10.0f;
 	glm::vec2 dir = { 0.0f,0.0f };
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	if (bCamera)
 	{
-		//Camera::instance().ProcessKeyboard(FORWARD, deltaTime);
-		dir.y += 1;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			Camera::instance().ProcessKeyboard(FORWARD, deltaTime);
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			Camera::instance().ProcessKeyboard(BACKWARD, deltaTime);
+		}
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			Camera::instance().ProcessKeyboard(LEFT, deltaTime);
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			Camera::instance().ProcessKeyboard(RIGHT, deltaTime);
+		}
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			Camera::instance().ProcessKeyboard(UP, deltaTime);
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		{
+			Camera::instance().ProcessKeyboard(DOWN, deltaTime);
+		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	else
 	{
-		//Camera::instance().ProcessKeyboard(BACKWARD, deltaTime);
-		dir.y -= 1;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			dir.y += 1;
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			dir.y -= 1;
+		}
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			dir.x -= 1;
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			dir.x += 1;
+		}
+		if (!(dir.x == 0 && dir.y == 0))
+		{
+			if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
+			if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
+			if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
+			if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
+
+			glm::vec3 v = Camera::instance().Position + glm::normalize(Camera::instance().Front * dir.y + Camera::instance().Right * dir.x) * speed * deltaTime;
+
+			Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0, 1, 0);			
+		}
 	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		//Camera::instance().ProcessKeyboard(LEFT, deltaTime);
-		dir.x -= 1;
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		//Camera::instance().ProcessKeyboard(RIGHT, deltaTime);
-		dir.x += 1;
-	}
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-	{
-		//Camera::instance().ProcessKeyboard(UP, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-	{
-		//Camera::instance().ProcessKeyboard(DOWN, deltaTime);
-	}
-	if (!(dir.x == 0 && dir.y == 0))
-	{
-		glm::vec3 v = Camera::instance().Position + glm::normalize(Camera::instance().Front * dir.y + Camera::instance().Right * dir.x)*speed;
-		
-		Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0,1,0);
-		if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
-		if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
-		if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
-		if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
-		
-	}
+	
 }
 
 void processUpdate(GLFWwindow* window)
@@ -213,12 +234,15 @@ void processRender(GLFWwindow* window)
 	glm::mat4 pv = projection * view;
 
 	// Grass
-	glDisable(GL_CULL_FACE);
-	programGrass.use();
-	programGrass.setMat4("pv", pv);
-	terra->Render(programGrass);
-	glUseProgram(0);
-	glEnable(GL_CULL_FACE);
+	if (bGrass)
+	{
+		glDisable(GL_CULL_FACE);
+		programGrass.use();
+		programGrass.setMat4("pv", pv);
+		terra->Render(programGrass);
+		glUseProgram(0);
+		glEnable(GL_CULL_FACE);
+	}	
 	
 	// main Render
 	program3D.use();
@@ -248,20 +272,46 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		if (bToggle == true)
+		if (bLineRender == true)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			bToggle = false;
+			bLineRender = false;
 		}
 		else
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			bToggle = true;
+			bLineRender = true;
+		}
+	}
+	if (key == GLFW_KEY_G && action == GLFW_PRESS)
+	{
+		if (bGrass == true)
+		{
+			bGrass = false;
+		}
+		else
+		{
+			bGrass = true;
 		}
 	}
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
+		if (bCamera == true)
+		{
+			if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
+			if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
+			if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
+			if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
 
+			glm::vec3 v = Camera::instance().Position;
+
+			Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0, 1, 0);
+			bCamera = false;
+		}
+		else
+		{			
+			bCamera = true;
+		}
 	}
 }
 

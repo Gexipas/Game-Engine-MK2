@@ -201,7 +201,7 @@ inline glm::vec3 Terrain::getNormal(int x, int y)
     return glm::normalize(glm::vec3(
         (2 * (Yleft - Yright) + Yupleft - Ydownright - Yup + Ydown) / ax, 
         2,
-        (2 * (Ydown - Yup) - Yupleft - Ydownright + Yup + Yleft) / ay));
+        -(2 * (Ydown - Yup) - Yupleft - Ydownright + Yup + Yleft) / ay));
 }
 
 inline vert Terrain::getVert(int x, int y)
