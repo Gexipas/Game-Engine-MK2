@@ -129,9 +129,8 @@
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2Dshapes.h" />
-    <ClInclude Include="3Dshapes.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="Cloth.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="cubeMap.h" />
     <ClInclude Include="Mesh3D.h" />
@@ -150,6 +149,8 @@
     <Text Include="resources\shaders\3DVertexShader.txt" />
     <Text Include="resources\shaders\buttonFragmentShader.txt" />
     <Text Include="resources\shaders\buttonVertexShader.txt" />
+    <Text Include="resources\shaders\ClothFragmentShader.txt" />
+    <Text Include="resources\shaders\ClothVertexShader.txt" />
     <Text Include="resources\shaders\cubeFragmentShader.txt" />
     <Text Include="resources\shaders\cubeVertexShader.txt" />
     <Text Include="resources\shaders\fogFragmentShader.txt" />
