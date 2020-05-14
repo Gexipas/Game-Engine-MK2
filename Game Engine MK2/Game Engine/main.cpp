@@ -239,6 +239,8 @@ void processRender(GLFWwindow* window)
 		glDisable(GL_CULL_FACE);
 		programGrass.use();
 		programGrass.setMat4("pv", pv);
+		programGrass.setMat4("view", view);
+		programGrass.setVec3("cameraPos", Camera::instance().Position);
 		terra->Render(programGrass);
 		glUseProgram(0);
 		glEnable(GL_CULL_FACE);

@@ -1,0 +1,21 @@
+Controls
+
+F - Toggle between terrain walk and free flying
+G - Toggle Grass visability
+R - Toggle Wireframe
+
+Terrain walk
+mouse - rotate camera
+W - move forward
+S - move backward
+A - move left
+D - move right
+
+Free flying
+mouse - rotate camera
+W - move forward
+S - move backward
+A - move left
+D - move right
+Spacebar - move up
+Left Control - move down
