@@ -12,7 +12,7 @@
 #include "cubeMap.h"
 #include "Terrain.h"
 #include "Cube.h"
-#include "model.h"
+#include "Cloth.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -40,7 +40,7 @@ float lastFrame = 0.0f;
 
 Cube* cuba;
 Terrain* terra;
-//Model* test;
+Cloth* test;
 
 
 Shader program3D;
@@ -59,7 +59,7 @@ int main()
 
 	terra = new Terrain(100.0f,100.0f,200,200);
 	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
-	//test = new Model("./resources/objects/nanosuit/nanosuit.obj");
+	test = new Cloth();
 
 	programShadow = Shader("Shadow");
 	program3D = Shader("3D");
@@ -104,6 +104,7 @@ int main()
 
 		// render
 		processRender(window);
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -228,6 +229,7 @@ void processRender(GLFWwindow* window)
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	cubeMap::instance().Render();
+	test->Render();
 
 	glm::mat4 projection = Camera::instance().CameraProjMatrix();
 	glm::mat4 view = Camera::instance().CameraViewMatrix();
@@ -258,8 +260,8 @@ void processRender(GLFWwindow* window)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 		
-	terra->Render(program3D);
-	cuba->Render(program3D);
+	//terra->Render(program3D);
+	//cuba->Render(program3D);
 
 	glUseProgram(0);
 

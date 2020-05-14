@@ -41,12 +41,6 @@
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="2Dshapes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="3Dshapes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,6 +54,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Cloth.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -119,6 +116,12 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="resources\shaders\GrassTessEvalShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\ClothFragmentShader.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="resources\shaders\ClothVertexShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
