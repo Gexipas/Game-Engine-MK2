@@ -36,7 +36,7 @@ inline void Mesh3D::Draw(Shader _program)
     _program.setMat4("model", model);
 
     glBindVertexArray(VAO);
-    glDrawArrays(GL_PATCHES, 0, vertices.size());
+    glDrawArrays(GL_PATCHES, 0, (GLsizei)vertices.size());
     glBindVertexArray(0);
 }
 

@@ -25,18 +25,18 @@ inline Cloth::Cloth()
 	int x = 10;
 	int z = 10;
 
-	for (unsigned int i = 0; i < z; i++)//z
+	for ( int i = 0; i < z; i++)//z
 	{
-		for (unsigned int j = 0; j < x; j++)//x
+		for ( int j = 0; j < x; j++)//x
 		{
 			m_positions.push_back(j);
 			m_positions.push_back(0);
 			m_positions.push_back(i);
 		}
 	}
-	for (unsigned int i = 0; i < z - 1; i++)//z
+	for ( int i = 0; i < z - 1; i++)//z
 	{
-		for (unsigned int j = 0; j < x - 1; j++)//x
+		for ( int j = 0; j < x - 1; j++)//x
 		{
 			m_indices.push_back(i * z + j);
 			m_indices.push_back((i + 1) * z + j + 1);
