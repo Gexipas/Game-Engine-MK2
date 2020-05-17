@@ -32,7 +32,7 @@ bool firstMouse = true;
 bool bLineRender = true;
 bool bFullscreen = true;
 bool bGrass = false;
-bool bCamera = false;
+bool bCamera = true;
 
 // timing
 float deltaTime = 0.0f;
@@ -193,7 +193,7 @@ void processUpdate(GLFWwindow* window)
 	lastFrame = currentFrame;
 
 
-	
+	test->Update();
 }
 
 void processRender(GLFWwindow* window)
