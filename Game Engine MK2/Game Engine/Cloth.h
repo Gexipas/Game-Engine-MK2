@@ -246,4 +246,38 @@ inline void Cloth::Update(float _deltaTime)
 
 		
 	}
+	for (unsigned int i = 0; i < m_sticks.size(); i++)
+	{
+		glm::vec3 d = m_positions[m_sticks[i].p1].position - m_positions[m_sticks[i].p0].position;
+
+		float distance = glm::length(d);
+
+		float difference = m_sticks[i].length - distance;
+
+		float percent = difference / distance / 2;
+
+		if (percent > 0) { percent = 0; }
+
+		glm::vec3 offset = d * percent * 0.9f;
+
+		if (m_positions[m_sticks[i].p0].staticPoint == true)
+		{
+			m_positions[m_sticks[i].p1].position += offset * 2.0f;
+		}
+		else if (m_positions[m_sticks[i].p1].staticPoint == true)
+		{
+			m_positions[m_sticks[i].p0].position -= offset * 2.0f;
+		}
+		else if (m_positions[m_sticks[i].p1].staticPoint == true &&
+			m_positions[m_sticks[i].p0].staticPoint == true)
+		{
+		}
+		else
+		{
+			m_positions[m_sticks[i].p0].position -= offset;
+			m_positions[m_sticks[i].p1].position += offset;
+		}
+
+
+	}
 }
