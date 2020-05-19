@@ -1,9 +1,15 @@
 #pragma once
 
 #include <vector>
+#include <random>
 
 #include "Shader.h"
 #include "Mesh3D.h"
+
+std::random_device rd;
+std::mt19937 mt(rd());
+std::uniform_real_distribution<float> dist(-10.0f, 10.0f);
+
 
 struct clothPoint
 {
@@ -25,13 +31,24 @@ public:
 	Cloth();
 	~Cloth();
 	void Render();
-	void Update();
+	void Update(float _deltaTime);
 private:
 	Shader programCloth;
-	int widthNodes = 10;//x
-	int heightNodes = 10;//z
-	float gravity = 0.001f;
-	float windZ = 0.005f;
+
+	// variables
+	float distanceWidth = 1.0f;
+	float distanceHeight = 1.0f;
+	float distanceDiag;
+	int widthNodes = 30;//x
+	int heightNodes = 30;//z
+	float gravity = 0.2f;
+	float windZ = 0.008f;
+	float friction = 0.999f;
+
+	float ground = -20.0f;
+	glm::vec3 sphereCenter = glm::vec3(15.0f,-10.0f,15.0f);
+	float sphereRadius = 10.0f;
+
 	std::vector<clothPoint> m_positions;
 	std::vector<clothSticks> m_sticks;
 	std::vector<int> m_indices;
@@ -40,6 +57,8 @@ private:
 
 inline Cloth::Cloth()
 {
+	distanceDiag = sqrtf((distanceWidth * distanceWidth + distanceHeight * distanceHeight));
+
 	programCloth = Shader("Cloth");
 
 	for ( int i = 0; i < heightNodes; i++)//z
@@ -56,13 +75,13 @@ inline Cloth::Cloth()
 	{
 		for ( int j = 0; j < widthNodes - 1; j++)//x
 		{
-			m_indices.push_back(i * heightNodes + j);
-			m_indices.push_back((i + 1) * heightNodes + j + 1);
-			m_indices.push_back((i) *heightNodes + j + 1);
+			m_indices.push_back(i * widthNodes + j);
+			m_indices.push_back((i + 1) * widthNodes + j + 1);
+			m_indices.push_back((i) *widthNodes + j + 1);
 
-			m_indices.push_back((i) *heightNodes + j);
-			m_indices.push_back((i + 1) * heightNodes + j);
-			m_indices.push_back((i + 1) * heightNodes + j + 1);
+			m_indices.push_back((i) * widthNodes + j);
+			m_indices.push_back((i + 1) * widthNodes + j);
+			m_indices.push_back((i + 1) * widthNodes + j + 1);
 		}
 	}
 
@@ -74,20 +93,32 @@ inline Cloth::Cloth()
 		for (int j = 0; j < widthNodes; j++)//x
 		{
 			clothSticks temp;
-			temp.length = 1.0f;
-			temp.p0 = i * heightNodes + j;
-			temp.p1 = i * heightNodes + j + 1;
+			
+			temp.p0 = i * widthNodes + j;
+			temp.p1 = i * widthNodes + j + 1;
 
 			if (j != widthNodes - 1)
 			{
+				temp.length = distanceWidth;
 				m_sticks.push_back(temp);
-			}				
-			
-			temp.p1 = (i + 1) * heightNodes + j;
+			}						
 
 			if (i != heightNodes - 1)
 			{
+				temp.p1 = (i + 1) * widthNodes + j;
+				
+				temp.length = distanceHeight;
 				m_sticks.push_back(temp);
+				if (j != widthNodes - 1)
+				{
+					temp.length = distanceDiag;
+					temp.p1 = (i + 1) * widthNodes + j + 1;
+					m_sticks.push_back(temp);
+
+					temp.p0 = (i+1) * widthNodes + j;
+					temp.p1 = i * widthNodes + j + 1;
+					m_sticks.push_back(temp);
+				}
 			}
 		}
 	}
@@ -131,9 +162,13 @@ inline void Cloth::Render()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size() * sizeof(int), &m_indices[0], GL_DYNAMIC_DRAW);
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	glEnableVertexAttribArray(0);
 	glDrawElements(GL_TRIANGLES, (GLsizei)m_indices.size(), GL_UNSIGNED_INT, 0);
 	glDisableVertexAttribArray(0);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	glBindVertexArray(0);
 
@@ -141,7 +176,7 @@ inline void Cloth::Render()
 	glEnable(GL_CULL_FACE);
 }
 
-inline void Cloth::Update()
+inline void Cloth::Update(float _deltaTime)
 {
 	for (unsigned int i = 0; i < m_positions.size(); i++)
 	{
@@ -151,11 +186,30 @@ inline void Cloth::Update()
 
 		if (m_positions[i].staticPoint != true)
 		{
-			m_positions[i].position += v;
-			m_positions[i].position.y -= gravity; // gravity
-			m_positions[i].position.z -= windZ; // wind
-		}
+			float groundFriction = 1.0f;
+			if (m_positions[i].position.y == ground)
+			{
+				groundFriction = 0.9f;
+			}
 
+			m_positions[i].position += (v * friction * groundFriction);
+			m_positions[i].position.y -= gravity * _deltaTime; // gravity
+
+			//m_positions[i].position.x += (dist(mt)/1000.0f); // windx
+			//m_positions[i].position.y += (dist(mt)/1000.0f); // windy
+			//m_positions[i].position.z -= windZ; // windz
+
+			if (m_positions[i].position.y < ground)
+			{
+				m_positions[i].position.y = ground;
+			}	
+
+			glm::vec3 rad = m_positions[i].position - sphereCenter;
+			if (glm::length(rad) < sphereRadius)
+			{
+				m_positions[i].position = sphereCenter + glm::normalize(rad) * sphereRadius;
+			}
+		}
 	}
 
 	for (unsigned int i = 0; i < m_sticks.size(); i++)
@@ -170,7 +224,7 @@ inline void Cloth::Update()
 
 		if (percent > 0) { percent = 0; }
 
-		glm::vec3 offset = d * percent;
+		glm::vec3 offset = d * percent *0.9f;
 
 		if (m_positions[m_sticks[i].p0].staticPoint == true)
 		{

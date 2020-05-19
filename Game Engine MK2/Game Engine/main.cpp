@@ -34,6 +34,10 @@ bool bFullscreen = true;
 bool bGrass = false;
 bool bCamera = true;
 
+
+bool bClothRun = false;
+
+
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -193,7 +197,10 @@ void processUpdate(GLFWwindow* window)
 	lastFrame = currentFrame;
 
 
-	test->Update();
+	if (bClothRun)
+	{
+		test->Update(deltaTime);
+	}
 }
 
 void processRender(GLFWwindow* window)
@@ -276,46 +283,57 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 {
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		if (bLineRender == true)
+		//if (bLineRender == true)
+		//{
+		//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//	bLineRender = false;
+		//}
+		//else
+		//{
+		//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		//	bLineRender = true;
+		//}
+	}
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+	{
+		if (bClothRun == true)
 		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			bLineRender = false;
+			bClothRun = false;
 		}
 		else
 		{
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			bLineRender = true;
+			bClothRun = true;
 		}
 	}
 	if (key == GLFW_KEY_G && action == GLFW_PRESS)
 	{
-		if (bGrass == true)
-		{
-			bGrass = false;
-		}
-		else
-		{
-			bGrass = true;
-		}
+		//if (bGrass == true)
+		//{
+		//	bGrass = false;
+		//}
+		//else
+		//{
+		//	bGrass = true;
+		//}
 	}
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
-		if (bCamera == true)
-		{
-			if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
-			if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
-			if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
-			if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
-
-			glm::vec3 v = Camera::instance().Position;
-
-			Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0, 1, 0);
-			bCamera = false;
-		}
-		else
-		{			
-			bCamera = true;
-		}
+		//if (bCamera == true)
+		//{
+		//	if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
+		//	if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
+		//	if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
+		//	if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
+		//
+		//	glm::vec3 v = Camera::instance().Position;
+		//
+		//	Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0, 1, 0);
+		//	bCamera = false;
+		//}
+		//else
+		//{			
+		//	bCamera = true;
+		//}
 	}
 }
 
