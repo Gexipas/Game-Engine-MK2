@@ -39,8 +39,8 @@ private:
 	float distanceWidth = 1.0f;
 	float distanceHeight = 1.0f;
 	float distanceDiag;
-	int widthNodes = 30;//x
-	int heightNodes = 30;//z
+	int widthNodes = 20;//x
+	int heightNodes = 20;//z
 	float gravity = 0.2f;
 	float windZ = 0.008f;
 	float friction = 0.999f;
@@ -199,11 +199,30 @@ inline void Cloth::Update(float _deltaTime)
 			//m_positions[i].position.y += (dist(mt)/1000.0f); // windy
 			//m_positions[i].position.z -= windZ; // windz
 
+			// self collision
+			//for (unsigned int j = i + 1; j < m_positions.size(); j++)
+			//{
+			//	glm::vec3 vec = m_positions[i].prevPosition - m_positions[j].position;
+			//	float distance = glm::length(vec);
+			//
+			//	if (distance <= 1.0f)
+			//	{
+			//		vec = glm::normalize(vec);
+			//		float test = glm::dot(vec, m_positions[i].position) - glm::dot(vec, m_positions[j].position);
+			//		if (test < 0)
+			//		{
+			//			m_positions[i].position -= vec * test;
+			//			m_positions[j].position += vec * test;
+			//		}
+			//	}
+			//}
+
 			if (m_positions[i].position.y < ground)
 			{
 				m_positions[i].position.y = ground;
 			}	
 
+			// sphere
 			glm::vec3 rad = m_positions[i].position - sphereCenter;
 			if (glm::length(rad) < sphereRadius)
 			{
