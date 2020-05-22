@@ -1,15 +1,13 @@
 Controls
 
-F - Toggle between terrain walk and free flying
-G - Toggle Grass visability
-R - Toggle Wireframe
+F - Release cloth
+E - Activate simulation
+R - Reset simulation
 
-Terrain walk
-mouse - rotate camera
-W - move forward
-S - move backward
-A - move left
-D - move right
+Left arrow key - decrease width cloth
+right arrow key - increase width cloth
+up arrow key - increase height cloth
+down arrow key - decrease height cloth
 
 Free flying
 mouse - rotate camera

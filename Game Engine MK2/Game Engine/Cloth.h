@@ -28,10 +28,15 @@ struct clothSticks
 class Cloth
 {
 public:
-	Cloth();
+	Cloth(int _clothWidth, int _clothHeight);
 	~Cloth();
 	void Render();
 	void Update(float _deltaTime);
+	void Reset();
+	void Release();
+
+	int widthNodes = 20;//x
+	int heightNodes = 20;//z
 private:
 	Shader programCloth;
 
@@ -39,8 +44,7 @@ private:
 	float distanceWidth = 1.0f;
 	float distanceHeight = 1.0f;
 	float distanceDiag;
-	int widthNodes = 20;//x
-	int heightNodes = 20;//z
+	
 	float gravity = 0.2f;
 	float windZ = 0.008f;
 	float friction = 0.999f;
@@ -55,8 +59,11 @@ private:
 	GLuint VAO, VBO, EBO;
 };
 
-inline Cloth::Cloth()
+inline Cloth::Cloth(int _clothWidth, int _clothHeight)
 {
+	widthNodes = _clothWidth;
+	heightNodes = _clothHeight;
+
 	distanceDiag = sqrtf((distanceWidth * distanceWidth + distanceHeight * distanceHeight));
 
 	programCloth = Shader("Cloth");
@@ -299,4 +306,30 @@ inline void Cloth::Update(float _deltaTime)
 
 
 	}
+}
+
+inline void Cloth::Reset()
+{
+	for (int i = 0; i < heightNodes; i++)//z
+	{
+		for (int j = 0; j < widthNodes; j++)//x
+		{
+			m_positions[i * widthNodes + j].position = glm::vec3(j, 0.0f, i);
+			m_positions[i * widthNodes + j].prevPosition = glm::vec3(j, 0.0f, i);
+		}
+	}
+}
+
+inline void Cloth::Release()
+{
+	if (m_positions[0].staticPoint == false)
+	{
+		m_positions[0].staticPoint = true;
+		m_positions[widthNodes - 1].staticPoint = true;
+	}
+	else
+	{
+		m_positions[0].staticPoint = false;
+		m_positions[widthNodes - 1].staticPoint = false;
+	}	
 }

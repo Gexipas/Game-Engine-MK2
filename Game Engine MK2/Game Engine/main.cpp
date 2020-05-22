@@ -63,7 +63,7 @@ int main()
 
 	terra = new Terrain(100.0f,100.0f,200,200);
 	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
-	test = new Cloth();
+	test = new Cloth(20,20);
 
 	programShadow = Shader("Shadow");
 	program3D = Shader("3D");
@@ -221,8 +221,8 @@ void processRender(GLFWwindow* window)
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	terra->Render(programShadow);
-	cuba->Render(programShadow);
+	//terra->Render(programShadow);
+	//cuba->Render(programShadow);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -293,6 +293,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		//	bLineRender = true;
 		//}
+		test->Reset();
 	}
 	if (key == GLFW_KEY_E && action == GLFW_PRESS)
 	{
@@ -334,6 +335,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		//{			
 		//	bCamera = true;
 		//}
+		test->Release();
+	}
+	int w = test->widthNodes;
+	int h = test->heightNodes;
+	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS && w > 2) // left downsize
+	{
+		test = new Cloth(w - 1, h);
+	}
+	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS && w < 50) // right upsize
+	{
+		test = new Cloth(w + 1, h);
+	}
+	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS && h > 2) // down downsize
+	{
+		test = new Cloth(w, h - 1);
+	}
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS && h < 50) // up upsize
+	{
+		test = new Cloth(w, h + 1);
 	}
 }
 
