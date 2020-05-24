@@ -44,7 +44,7 @@ float lastFrame = 0.0f;
 
 Cube* cuba;
 Terrain* terra;
-Cloth* test;
+//Cloth* test;
 
 
 Shader program3D;
@@ -63,7 +63,7 @@ int main()
 
 	terra = new Terrain(100.0f,100.0f,200,200);
 	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
-	test = new Cloth(20,20);
+	//test = new Cloth(20,20);
 
 	programShadow = Shader("Shadow");
 	program3D = Shader("3D");
@@ -197,10 +197,10 @@ void processUpdate(GLFWwindow* window)
 	lastFrame = currentFrame;
 
 
-	if (bClothRun)
-	{
-		test->Update(deltaTime);
-	}
+	//if (bClothRun)
+	//{
+	//	test->Update(deltaTime);
+	//}
 }
 
 void processRender(GLFWwindow* window)
@@ -221,8 +221,8 @@ void processRender(GLFWwindow* window)
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	//terra->Render(programShadow);
-	//cuba->Render(programShadow);
+	terra->Render(programShadow);
+	cuba->Render(programShadow);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -233,10 +233,10 @@ void processRender(GLFWwindow* window)
 
 	
 	
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	cubeMap::instance().Render();
-	test->Render();
+	//test->Render();
 
 	glm::mat4 projection = Camera::instance().CameraProjMatrix();
 	glm::mat4 view = Camera::instance().CameraViewMatrix();
@@ -267,94 +267,94 @@ void processRender(GLFWwindow* window)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 		
-	//terra->Render(program3D);
-	//cuba->Render(program3D);
+	terra->Render(program3D);
+	cuba->Render(program3D);
 
 	glUseProgram(0);
 
 	
 	// Render End
 
-	//glDisable(GL_CULL_FACE);
-	//glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_BLEND);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_R && action == GLFW_PRESS)
 	{
-		//if (bLineRender == true)
-		//{
-		//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//	bLineRender = false;
-		//}
-		//else
-		//{
-		//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//	bLineRender = true;
-		//}
-		test->Reset();
-	}
-	if (key == GLFW_KEY_E && action == GLFW_PRESS)
-	{
-		if (bClothRun == true)
+		if (bLineRender == true)
 		{
-			bClothRun = false;
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			bLineRender = false;
 		}
 		else
 		{
-			bClothRun = true;
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			bLineRender = true;
 		}
+		//test->Reset();
+	}
+	if (key == GLFW_KEY_E && action == GLFW_PRESS)
+	{
+		//if (bClothRun == true)
+		//{
+		//	bClothRun = false;
+		//}
+		//else
+		//{
+		//	bClothRun = true;
+		//}
 	}
 	if (key == GLFW_KEY_G && action == GLFW_PRESS)
 	{
-		//if (bGrass == true)
-		//{
-		//	bGrass = false;
-		//}
-		//else
-		//{
-		//	bGrass = true;
-		//}
+		if (bGrass == true)
+		{
+			bGrass = false;
+		}
+		else
+		{
+			bGrass = true;
+		}
 	}
 	if (key == GLFW_KEY_F && action == GLFW_PRESS)
 	{
-		//if (bCamera == true)
-		//{
-		//	if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
-		//	if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
-		//	if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
-		//	if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
-		//
-		//	glm::vec3 v = Camera::instance().Position;
-		//
-		//	Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0, 1, 0);
-		//	bCamera = false;
-		//}
-		//else
-		//{			
-		//	bCamera = true;
-		//}
-		test->Release();
+		if (bCamera == true)
+		{
+			if (Camera::instance().Position.x > 40)Camera::instance().Position.x = 40;
+			if (Camera::instance().Position.x < -40)Camera::instance().Position.x = -40;
+			if (Camera::instance().Position.z > 40)Camera::instance().Position.z = 40;
+			if (Camera::instance().Position.z < -40)Camera::instance().Position.z = -40;
+		
+			glm::vec3 v = Camera::instance().Position;
+		
+			Camera::instance().Position = terra->getPosition(v.x, v.z) + glm::vec3(0, 1, 0);
+			bCamera = false;
+		}
+		else
+		{			
+			bCamera = true;
+		}
+		//test->Release();
 	}
-	int w = test->widthNodes;
-	int h = test->heightNodes;
-	if (key == GLFW_KEY_LEFT && action == GLFW_PRESS && w > 2) // left downsize
-	{
-		test = new Cloth(w - 1, h);
-	}
-	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS && w < 50) // right upsize
-	{
-		test = new Cloth(w + 1, h);
-	}
-	if (key == GLFW_KEY_DOWN && action == GLFW_PRESS && h > 2) // down downsize
-	{
-		test = new Cloth(w, h - 1);
-	}
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS && h < 50) // up upsize
-	{
-		test = new Cloth(w, h + 1);
-	}
+	//int w = test->widthNodes;
+	//int h = test->heightNodes;
+	//if (key == GLFW_KEY_LEFT && action == GLFW_PRESS && w > 2) // left downsize
+	//{
+	//	test = new Cloth(w - 1, h);
+	//}
+	//if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS && w < 50) // right upsize
+	//{
+	//	test = new Cloth(w + 1, h);
+	//}
+	//if (key == GLFW_KEY_DOWN && action == GLFW_PRESS && h > 2) // down downsize
+	//{
+	//	test = new Cloth(w, h - 1);
+	//}
+	//if (key == GLFW_KEY_UP && action == GLFW_PRESS && h < 50) // up upsize
+	//{
+	//	test = new Cloth(w, h + 1);
+	//}
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

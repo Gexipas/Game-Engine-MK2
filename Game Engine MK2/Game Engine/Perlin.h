@@ -3,6 +3,7 @@
 #include<math.h>
 #include<iostream>
 #include<vector>
+#include<random>
 
 class Perlin
 {
@@ -17,7 +18,14 @@ public:
 	void operator= (Perlin const&) = delete;
 
 private:
-	Perlin() {};
+	Perlin() 
+	{
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::uniform_int_distribution<int> dist(1, 100);
+
+		seed = dist(mt);
+	};
 	~Perlin() {};
 	/*--------------------------------------------------*/
 
@@ -31,6 +39,7 @@ private:
 	float InterpolatedNoise(float x, float y);
 	float Noise2D(int x, int y);
 
+	int seed;
 	int numOctaves = 10;
 	float persistence = 1.1f;
 };
@@ -54,7 +63,7 @@ inline std::vector<std::vector<float>> Perlin::createNoise(int lengthX, int leng
 
 inline float Perlin::Random(int x, int y)
 {
-	int n = x + y * 57;
+	int n = x + y * 57 + seed;
 	n = (n << 13) ^ n;
 	int t = (n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff;
 	return 1.0f - float(t) * 0.931322574615478515625e-9f;
