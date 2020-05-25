@@ -68,8 +68,8 @@ int main()
 	terra = new Terrain(100.0f,100.0f,200,200);
 	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
 	//test = new Cloth(20,20);
-	particles = new ParticleSystem(glm::vec3(0.0f, 4.0f, 0.0f),"awesomeface.png");
-	snow = new Compute();
+	//particles = new ParticleSystem(glm::vec3(0.0f, 4.0f, 0.0f),"awesomeface.png");
+	snow = new Compute("snowflake.png");
 
 	programShadow = Shader("Shadow");
 	program3D = Shader("3D");
@@ -202,7 +202,7 @@ void processUpdate(GLFWwindow* window)
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
-	particles->Update(deltaTime);
+	//particles->Update(deltaTime);
 
 	//if (bClothRun)
 	//{

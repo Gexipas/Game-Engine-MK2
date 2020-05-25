@@ -12,7 +12,7 @@ const unsigned int SCR_HEIGHT = (unsigned int)1080;
 
 static float randomFloat()
 {
-	float r = (float)rand() / (double)RAND_MAX;
+	float r = (float)rand() / (float)RAND_MAX;
 	return r;
 }
 
