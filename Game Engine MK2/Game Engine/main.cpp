@@ -13,6 +13,8 @@
 #include "Terrain.h"
 #include "Cube.h"
 #include "Cloth.h"
+#include "ParticleSystem.h"
+#include "Compute.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -45,6 +47,8 @@ float lastFrame = 0.0f;
 Cube* cuba;
 Terrain* terra;
 //Cloth* test;
+ParticleSystem* particles;
+Compute* snow;
 
 
 Shader program3D;
@@ -64,6 +68,8 @@ int main()
 	terra = new Terrain(100.0f,100.0f,200,200);
 	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
 	//test = new Cloth(20,20);
+	particles = new ParticleSystem(glm::vec3(0.0f, 4.0f, 0.0f),"awesomeface.png");
+	snow = new Compute();
 
 	programShadow = Shader("Shadow");
 	program3D = Shader("3D");
@@ -196,6 +202,7 @@ void processUpdate(GLFWwindow* window)
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
+	particles->Update(deltaTime);
 
 	//if (bClothRun)
 	//{
@@ -272,6 +279,8 @@ void processRender(GLFWwindow* window)
 
 	glUseProgram(0);
 
+	//particles->Render();
+	snow->Render();
 	
 	// Render End
 
