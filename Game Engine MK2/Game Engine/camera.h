@@ -73,7 +73,7 @@ public:
         //glm::mat4 proj = glm::ortho(0.0f, (float)SCR_WIDTH, (float)SCR_HEIGHT, 0.0f, 0.1f, 100.0f);
 
         // Perspective Matrix
-        glm::mat4 proj = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 100.0f);
+        glm::mat4 proj = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.01f, 400.0f);
 
         return (proj);
     }

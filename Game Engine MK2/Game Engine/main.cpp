@@ -66,7 +66,7 @@ int main()
 	GLFWwindow* window = InitWindow();
 
 	//terra = new Terrain(100.0f, 100.0f, 200, 200);
-	terra = new Terrain("heightmapbetter.raw");
+	terra = new Terrain("combined.raw");
 	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
 	//test = new Cloth(20,20);
 	//particles = new ParticleSystem(glm::vec3(0.0f, 4.0f, 0.0f),"awesomeface.png");
@@ -281,7 +281,7 @@ void processRender(GLFWwindow* window)
 	glUseProgram(0);
 
 	//particles->Render();
-	snow->Render();
+	//snow->Render();
 	
 	// Render End
 

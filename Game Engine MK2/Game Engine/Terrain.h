@@ -37,105 +37,100 @@ inline Terrain::Terrain(const char* _filename)
     char const* path = totalPath.c_str();
 
 
-    std::ifstream myData(path, std::ios::binary);
-    short value;
-    unsigned int i = 0;
-    char buf[sizeof(short)];
+    //std::ifstream myData(path, std::ios::binary);
+    //short value;
+    //unsigned int i = 0;
+    //char buf[sizeof(short)];
 
-    std::vector<float> temp;
-    
-    if (myData.fail())
-    {
-        std::cout << "Input file opening failed.\n";
-        myData.close();
-    }
-    else
-    {
-        while (myData.read(buf, sizeof(buf)))
-        {
-            memcpy(&value, buf, sizeof(value));
-            //std::cout << value << " " << std::endl;
-            temp.push_back(value);
-            
-            i++;
-            if (i % 3000 == 0)
-            {
-                m_heightMap.push_back(temp);
-                temp.clear();
-            }
-        }
-    
-        std::cout << std::endl << "Total count: " << temp.size() << std::endl;
-        myData.close();
-    }      
-
-    //int error, i, j, index;
-    //FILE* filePtr;
-    //unsigned long long imageSize, count;
-    //unsigned short* rawImage;
-
-
-    //// Create the float array to hold the height map data.
-
-    //// Open the 16 bit raw height map file for reading in binary.
-    //error = fopen_s(&filePtr, path, "rb");
-    //if (error != 0)
+    //std::vector<float> temp;
+    //
+    //if (myData.fail())
     //{
-    //    std::cout << "error loading" << std::endl;
+    //    std::cout << "Input file opening failed.\n";
+    //    myData.close();
     //}
-
-    //// Calculate the size of the raw image data.
-    //imageSize = 3000 * 3000;
-
-    //// Allocate memory for the raw image data.
-    //rawImage = new unsigned short[imageSize];
-    //if (!rawImage)
+    //else
     //{
-    //    std::cout << "error loading" << std::endl;
-    //}
-
-    //// Read in the raw image data.
-    //count = fread(rawImage, sizeof(unsigned short), imageSize, filePtr);
-    //if (count != imageSize)
-    //{
-    //    std::cout << "error image size" << std::endl;
-    //}
-
-    //// Close the file.
-    //error = fclose(filePtr);
-    //if (error != 0)
-    //{
-    //    std::cout << "error close" << std::endl;
-    //}
-
-    //// Copy the image data into the height map array.
-    //for (j = 0; j < 3000; j++)
-    //{
-    //    std::vector<float> temp;
-    //    for (i = 0; i < 3000; i++)
+    //    while (myData.read(buf, sizeof(buf)))
     //    {
-    //        index = (3000 * j) + i;
-
-    //        // Store the height at this point in the height map array.
-    //         temp.push_back( (float)rawImage[index]);
+    //        memcpy(&value, buf, sizeof(value));
+    //        //std::cout << value << " " << std::endl;
+    //        temp.push_back(value);
+    //        
+    //        i++;
+    //        if (i % 3000 == 0)
+    //        {
+    //            m_heightMap.push_back(temp);
+    //            temp.clear();
+    //        }
     //    }
-    //    m_heightMap.push_back(temp);
-    //}
+    //
+    //    std::cout << std::endl << "Total count: " << temp.size() << std::endl;
+    //    myData.close();
+    //}      
 
-    //// Release the bitmap image data.
-    //delete[] rawImage;
-    //rawImage = 0;
+    int error, i, j, index;
+    FILE* filePtr;
+    unsigned long long imageSize, count;
+    unsigned short* rawImage;
+
+    error = fopen_s(&filePtr, path, "rb");
+    if (error != 0)
+    {
+        std::cout << "error loading" << std::endl;
+    }
+
+    imageSize = 3000 * 3000;
+
+    rawImage = new unsigned short[imageSize];
+    if (!rawImage)
+    {
+        std::cout << "error loading" << std::endl;
+    }
+
+    count = fread(rawImage, sizeof(unsigned short), imageSize, filePtr);
+    if (count != imageSize)
+    {
+        std::cout << "error image size" << std::endl;
+    }
+
+    // Close the file.
+    error = fclose(filePtr);
+    if (error != 0)
+    {
+        std::cout << "error close" << std::endl;
+    }
+
+    // Copy the image data into the height map array.
+    for (j = 0; j < 1500; j++)
+    {
+        std::vector<float> temp;
+        for (i = 0; i < 1500; i++)
+        {
+            index = (3000 * j) + i;
+
+            // Store the height at this point in the height map array.
+             temp.push_back( (float)rawImage[index]/25500.0f);
+        }
+        m_heightMap.push_back(temp);
+    }
+
+    std::cout << m_heightMap[1038][272] << std::endl;
+
+    // Release the bitmap image data.
+    delete[] rawImage;
+    rawImage = 0;
 
    
 
-    m_width = 100.0f;
-    m_height = 100.0f;
+    m_width = 300.0f;
+    m_height = 300.0f;
     m_position = glm::vec3(-m_width / 2.0f, 0.0f, -m_height / 2.0f);
-    m_cellCountX = 3000;
-    m_cellCountY = 3000;
+    m_cellCountX = 1500;
+    m_cellCountY = 1500;
     createTerrain();
 
-    SetupMesh("sh_bottom.jpg");
+    SetupMesh("default.jpg");
 }
 
 inline Terrain::Terrain(float _width, float _height, int _cellCountX, int _cellCountY)
@@ -316,10 +311,10 @@ inline glm::vec3 Terrain::getNormal(int x, int y)
         -(2 * (Ydown - Yup) - Yupleft - Ydownright + Yup + Yleft) / ay));
 }
 
-inline vert Terrain::getVert(int y, int x)
+inline vert Terrain::getVert(int x, int y)
 {
     vert temp;
-    temp.position = glm::vec3((float)x / m_heightMap[y].size() * m_width, 0.00001*m_heightMap[y][x], (float)y / m_heightMap.size() * m_height);
+    temp.position = glm::vec3((float)x / m_heightMap[y].size() * m_width, m_heightMap[y][x], (float)y / m_heightMap.size() * m_height);
     temp.tex = glm::vec2((float)x / (float)m_heightMap[y].size(), (float)y / (float)m_heightMap.size());
     temp.normal = getNormal(x, y);
     return temp;
