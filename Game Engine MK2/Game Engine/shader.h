@@ -31,28 +31,32 @@ public:
 		GLuint shaderID;
 		if (programList.count(std::string(shaderFilename)) == 0)
 		{
+			std::string filelocation = "resources/shaders/";
+			filelocation += shaderFilename;
+			filelocation += "/";
+
 			char vertexShaderFilename[256];
-			strncpy_s(vertexShaderFilename, "resources/shaders/", sizeof(vertexShaderFilename));
+			strncpy_s(vertexShaderFilename, filelocation.c_str(), sizeof(vertexShaderFilename));
 			strncat_s(vertexShaderFilename, shaderFilename, sizeof(vertexShaderFilename));
 			strncat_s(vertexShaderFilename, "VertexShader.txt", sizeof(vertexShaderFilename));
 
 			char fragmentShaderFilename[256];
-			strncpy_s(fragmentShaderFilename, "resources/shaders/", sizeof(fragmentShaderFilename));
+			strncpy_s(fragmentShaderFilename, filelocation.c_str(), sizeof(fragmentShaderFilename));
 			strncat_s(fragmentShaderFilename, shaderFilename, sizeof(fragmentShaderFilename));
 			strncat_s(fragmentShaderFilename, "FragmentShader.txt", sizeof(fragmentShaderFilename));
 
 			char geometryShaderFilename[256];
-			strncpy_s(geometryShaderFilename, "resources/shaders/", sizeof(geometryShaderFilename));
+			strncpy_s(geometryShaderFilename, filelocation.c_str(), sizeof(geometryShaderFilename));
 			strncat_s(geometryShaderFilename, shaderFilename, sizeof(geometryShaderFilename));
 			strncat_s(geometryShaderFilename, "GeometryShader.txt", sizeof(geometryShaderFilename));
 			
 			char tessControlShaderFilename[256];
-			strncpy_s(tessControlShaderFilename, "resources/shaders/", sizeof(tessControlShaderFilename));
+			strncpy_s(tessControlShaderFilename, filelocation.c_str(), sizeof(tessControlShaderFilename));
 			strncat_s(tessControlShaderFilename, shaderFilename, sizeof(tessControlShaderFilename));
 			strncat_s(tessControlShaderFilename, "TessControlShader.txt", sizeof(tessControlShaderFilename));
 
 			char tessEvalShaderFilename[256];
-			strncpy_s(tessEvalShaderFilename, "resources/shaders/", sizeof(tessEvalShaderFilename));
+			strncpy_s(tessEvalShaderFilename, filelocation.c_str(), sizeof(tessEvalShaderFilename));
 			strncat_s(tessEvalShaderFilename, shaderFilename, sizeof(tessEvalShaderFilename));
 			strncat_s(tessEvalShaderFilename, "TessEvalShader.txt", sizeof(tessEvalShaderFilename));
 

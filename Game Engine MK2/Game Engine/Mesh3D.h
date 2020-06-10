@@ -19,6 +19,7 @@ public:
 
     void Draw(Shader _program);
 	void SetupMesh(const char* _texturePath);
+    unsigned int SetupTex(const char* _texturePath);
 	
 	unsigned int VAO, texture;
 	std::vector<vert> vertices;
@@ -63,6 +64,12 @@ inline void Mesh3D::SetupMesh(const char* _texturePath)
 
     glBindVertexArray(0);
 
+    texture = SetupTex(_texturePath);
+}
+
+inline unsigned int Mesh3D::SetupTex(const char* _texturePath)
+{
+    unsigned int texture;
     std::string totalPath = ".//resources//textures//";
     totalPath.append(_texturePath);
     char const* path = totalPath.c_str();
@@ -70,7 +77,7 @@ inline void Mesh3D::SetupMesh(const char* _texturePath)
     glGenTextures(1, &texture);
 
     int width, height, nrComponents;
-   // stbi_set_flip_vertically_on_load(true);
+    // stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load(totalPath.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {
@@ -96,4 +103,5 @@ inline void Mesh3D::SetupMesh(const char* _texturePath)
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
+    return texture;
 }

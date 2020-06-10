@@ -214,6 +214,9 @@ inline void Compute::Render()
 
 	renderProgram.setMat4("pv", pv);
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glBindBuffer(GL_ARRAY_BUFFER, posVbo);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, NULL, 0);
 	glEnableVertexAttribArray(0);

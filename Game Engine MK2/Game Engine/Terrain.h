@@ -36,39 +36,7 @@ inline Terrain::Terrain(const char* _filename)
     totalPath.append(_filename);
     char const* path = totalPath.c_str();
 
-
-    //std::ifstream myData(path, std::ios::binary);
-    //short value;
-    //unsigned int i = 0;
-    //char buf[sizeof(short)];
-
-    //std::vector<float> temp;
-    //
-    //if (myData.fail())
-    //{
-    //    std::cout << "Input file opening failed.\n";
-    //    myData.close();
-    //}
-    //else
-    //{
-    //    while (myData.read(buf, sizeof(buf)))
-    //    {
-    //        memcpy(&value, buf, sizeof(value));
-    //        //std::cout << value << " " << std::endl;
-    //        temp.push_back(value);
-    //        
-    //        i++;
-    //        if (i % 3000 == 0)
-    //        {
-    //            m_heightMap.push_back(temp);
-    //            temp.clear();
-    //        }
-    //    }
-    //
-    //    std::cout << std::endl << "Total count: " << temp.size() << std::endl;
-    //    myData.close();
-    //}      
-
+    
     int error, i, j, index;
     FILE* filePtr;
     unsigned long long imageSize, count;
@@ -102,20 +70,20 @@ inline Terrain::Terrain(const char* _filename)
     }
 
     // Copy the image data into the height map array.
-    for (j = 0; j < 1500; j++)
+    for (j = 0; j < 1500; j+=2)
     {
         std::vector<float> temp;
-        for (i = 0; i < 1500; i++)
+        for (i = 0; i < 1500; i+=2)
         {
             index = (3000 * j) + i;
 
             // Store the height at this point in the height map array.
-             temp.push_back( (float)rawImage[index]/25500.0f);
+             temp.push_back( (float)rawImage[index]/10000.0f);
         }
         m_heightMap.push_back(temp);
     }
 
-    std::cout << m_heightMap[1038][272] << std::endl;
+    //std::cout << m_heightMap[1038][272] << std::endl;
 
     // Release the bitmap image data.
     delete[] rawImage;

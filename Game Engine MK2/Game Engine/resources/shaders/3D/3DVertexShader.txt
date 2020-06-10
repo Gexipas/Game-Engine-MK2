@@ -1,0 +1,16 @@
+#version 450 core
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec2 texCoord;
+layout (location = 2) in vec3 normal;
+	
+out vec2 TexCoord;
+out vec3 Normal;
+out vec3 Position;	
+
+void main(void)
+{    	
+	Position = position;
+	Normal = normal;
+	TexCoord = texCoord;
+}

@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "cubeMap.h"
 #include "Terrain.h"
+#include "HeightTerrain.h"
 #include "Cube.h"
 #include "Cloth.h"
 #include "ParticleSystem.h"
@@ -36,6 +37,7 @@ bool bFullscreen = true;
 bool bGrass = false;
 bool bCamera = true;
 
+int rain = 0;
 
 bool bClothRun = false;
 
@@ -46,12 +48,14 @@ float lastFrame = 0.0f;
 
 Cube* cuba;
 Terrain* terra;
+HeightTerrain* terrainHeight;
 //Cloth* test;
 ParticleSystem* particles;
 Compute* snow;
 
 
 Shader program3D;
+Shader programTerrain;
 Shader programShadow;
 Shader programGrass;
 
@@ -65,16 +69,25 @@ int main()
 {
 	GLFWwindow* window = InitWindow();
 
-	//terra = new Terrain(100.0f, 100.0f, 200, 200);
-	terra = new Terrain("combined.raw");
+	terra = new Terrain(100.0f, 100.0f, 200, 200);
+	//terra = new Terrain("combined.raw");
+	terrainHeight = new HeightTerrain("testheight.png");
 	cuba = new Cube(glm::vec3(0.0f, 3.0f, 0.0f));
 	//test = new Cloth(20,20);
-	//particles = new ParticleSystem(glm::vec3(0.0f, 4.0f, 0.0f),"awesomeface.png");
+	particles = new ParticleSystem(glm::vec3(0.0f, 4.0f, 0.0f),"snowflake.png");
 	snow = new Compute("snowflake.png");
 
 	programShadow = Shader("Shadow");
 	program3D = Shader("3D");
 	programGrass = Shader("Grass");
+
+	programTerrain = Shader("Terrain");
+	programTerrain.use();
+	programTerrain.setInt("Texture", 0);
+	programTerrain.setInt("ShadowMap", 1);
+	programTerrain.setInt("HeightMap", 2);
+	programTerrain.setInt("RiverMap", 3);
+	glUseProgram(0);
 
 	program3D.use();
 	program3D.setInt("Texture", 0);
@@ -139,29 +152,34 @@ void processInput(GLFWwindow *window)
 
 	if (bCamera)
 	{
+		float speedFree = 2.0f;
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			speedFree = 10.0f;
+		}
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		{
-			Camera::instance().ProcessKeyboard(FORWARD, deltaTime);
+			Camera::instance().ProcessKeyboard(FORWARD, deltaTime * speedFree);
 		}
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		{
-			Camera::instance().ProcessKeyboard(BACKWARD, deltaTime);
+			Camera::instance().ProcessKeyboard(BACKWARD, deltaTime * speedFree);
 		}
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 		{
-			Camera::instance().ProcessKeyboard(LEFT, deltaTime);
+			Camera::instance().ProcessKeyboard(LEFT, deltaTime * speedFree);
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		{
-			Camera::instance().ProcessKeyboard(RIGHT, deltaTime);
+			Camera::instance().ProcessKeyboard(RIGHT, deltaTime * speedFree);
 		}
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 		{
-			Camera::instance().ProcessKeyboard(UP, deltaTime);
+			Camera::instance().ProcessKeyboard(UP, deltaTime * speedFree);
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 		{
-			Camera::instance().ProcessKeyboard(DOWN, deltaTime);
+			Camera::instance().ProcessKeyboard(DOWN, deltaTime * speedFree);
 		}
 	}
 	else
@@ -203,7 +221,11 @@ void processUpdate(GLFWwindow* window)
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
-	//particles->Update(deltaTime);
+	
+	if (rain == 1)
+	{
+		particles->Update(deltaTime);
+	}
 
 	//if (bClothRun)
 	//{
@@ -218,7 +240,7 @@ void processRender(GLFWwindow* window)
 	glEnable(GL_MULTISAMPLE);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-	glCullFace(GL_FRONT);
+	
 	programShadow.use();
 	glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.01f, 20.0f);
 	glm::mat4 lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -229,7 +251,9 @@ void processRender(GLFWwindow* window)
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+	terrainHeight->Render(programShadow);
 	terra->Render(programShadow);
+	glCullFace(GL_FRONT);
 	cuba->Render(programShadow);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -239,8 +263,6 @@ void processRender(GLFWwindow* window)
 	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-	
-	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	cubeMap::instance().Render();
@@ -262,6 +284,26 @@ void processRender(GLFWwindow* window)
 		glUseProgram(0);
 		glEnable(GL_CULL_FACE);
 	}	
+
+	glPatchParameteri(GL_PATCH_VERTICES, 4);
+
+	// terrain render
+	programTerrain.use();
+
+	programTerrain.setMat4("pv", pv);
+
+	programTerrain.setMat4("lightVPMatrix", lightVPMatrix);
+	programTerrain.setVec3("cameraPos", Camera::instance().Position);
+	programTerrain.setVec3("lightPos", lightPos);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+
+	terrainHeight->Render(programTerrain);
+
+	glUseProgram(0);
+
+	glPatchParameteri(GL_PATCH_VERTICES, 3);
 	
 	// main Render
 	program3D.use();
@@ -274,14 +316,22 @@ void processRender(GLFWwindow* window)
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
-		
-	terra->Render(program3D);
+
+	terra->Render(programTerrain);
 	cuba->Render(program3D);
 
 	glUseProgram(0);
 
-	//particles->Render();
-	//snow->Render();
+	if (rain == 1)
+	{
+		particles->Render();
+	}
+	if (rain == 2)
+	{
+		snow->Render();
+	}
+	
+	
 	
 	// Render End
 
@@ -315,6 +365,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		//{
 		//	bClothRun = true;
 		//}
+		rain++;
+		if (rain == 3)
+		{
+			rain = 0;
+		}
+
 	}
 	if (key == GLFW_KEY_G && action == GLFW_PRESS)
 	{

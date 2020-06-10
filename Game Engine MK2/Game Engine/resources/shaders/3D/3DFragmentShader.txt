@@ -1,0 +1,96 @@
+#version 450 core
+
+in vec2 TexCoord;
+in vec3 Normal;
+in vec3 FragPos;
+in vec4 FragPosLightSpace;
+
+out vec4 fragColor;
+
+// texture
+uniform sampler2D Texture;
+uniform sampler2D ShadowMap;
+
+// lighting
+uniform vec3 cameraPos; 
+uniform vec3 lightPos; 
+
+
+// shadow calculation
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+	// To get NDC [-1, 1] from screenspace
+	vec3 ndcSpace = fragPosLightSpace.xyz/fragPosLightSpace.w;
+	
+	// Convert to TexCoordSpace [0,1]
+	vec3 texCoordSpace =  0.5f * ndcSpace + 0.5f;
+
+	vec3 normal = normalize(Normal);
+    vec3 lightDir = normalize(lightPos - FragPos);
+    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+	float currentDepth = texCoordSpace.z;
+	
+	float shadow = 0.0f;
+	vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(ShadowMap, texCoordSpace.xy + vec2(x, y) * texelSize).r; 
+            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+        }    
+    }
+    shadow /= 9.0;
+    
+    // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+    if(ndcSpace.z > 1.0)
+        shadow = 0.0;
+        
+    return shadow;
+}
+
+
+void main(void)
+{   
+    
+	vec3 color = texture(Texture, TexCoord).rgb;
+    //vec3 color = vec3(0.0f,1.0f,0.0f);
+    //if(FragPos.y > 1.0f)
+    //{
+    //    color = vec3(1.0f);
+    //}
+    //if(FragPos.y == 0.0f)
+    //{
+    //    color = vec3(0.0f,0.0f,1.0f);
+    //}
+    vec3 normal = normalize(Normal);
+    vec3 lightColor = vec3(1.0);
+
+    // ambient
+    vec3 ambient = 0.5 * color;
+
+    // diffuse
+    vec3 lightDir = normalize(lightPos - FragPos);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * lightColor;
+
+    // specular
+    vec3 viewDir = normalize(cameraPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = 0.0;
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+    vec3 specular = spec * lightColor;   
+    
+    // calculate shadow
+    float shadow = ShadowCalculation(FragPosLightSpace);        
+    
+    // fog
+    float d = distance(FragPos.xyz, cameraPos);
+    float lerp = d/50.f;
+    lerp = clamp(lerp, 0.0, 1.0);//(1-lerp) * vec3(1);//
+
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
+    
+    fragColor = vec4(lighting, 1.0);
+}

@@ -134,6 +134,7 @@
     <ClInclude Include="Compute.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="cubeMap.h" />
+    <ClInclude Include="HeightTerrain.h" />
     <ClInclude Include="Mesh3D.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="modelMesh.h" />
@@ -146,33 +147,14 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="resources\shaders\3DFragmentShader.txt" />
-    <Text Include="resources\shaders\3DTessControlShader.txt" />
-    <Text Include="resources\shaders\3DTessEvalShader.txt" />
-    <Text Include="resources\shaders\3DVertexShader.txt" />
-    <Text Include="resources\shaders\buttonFragmentShader.txt" />
-    <Text Include="resources\shaders\buttonVertexShader.txt" />
-    <Text Include="resources\shaders\ClothFragmentShader.txt" />
-    <Text Include="resources\shaders\ClothVertexShader.txt" />
-    <Text Include="resources\shaders\ComputeShader.txt" />
-    <Text Include="resources\shaders\cubeFragmentShader.txt" />
-    <Text Include="resources\shaders\cubeVertexShader.txt" />
-    <Text Include="resources\shaders\fogFragmentShader.txt" />
-    <Text Include="resources\shaders\fogVertexShader.txt" />
-    <Text Include="resources\shaders\GrassFragmentShader.txt" />
-    <Text Include="resources\shaders\GrassGeometryShader.txt" />
-    <Text Include="resources\shaders\GrassTessControlShader.txt" />
-    <Text Include="resources\shaders\GrassTessEvalShader.txt" />
-    <Text Include="resources\shaders\GrassVertexShader.txt" />
-    <Text Include="resources\shaders\ParticleFragmentShader.txt" />
-    <Text Include="resources\shaders\ParticleGeometryShader.txt" />
-    <Text Include="resources\shaders\ParticleVertexShader.txt" />
-    <Text Include="resources\shaders\ShadowFragmentShader.txt" />
-    <Text Include="resources\shaders\ShadowTessControlShader.txt" />
-    <Text Include="resources\shaders\ShadowTessEvalShader.txt" />
-    <Text Include="resources\shaders\ShadowVertexShader.txt" />
-    <Text Include="resources\shaders\SnowFragmentShader.txt" />
-    <Text Include="resources\shaders\SnowVertexShader.txt" />
+    <Text Include="resources\shaders\3D\3DFragmentShader.txt" />
+    <Text Include="resources\shaders\3D\3DTessControlShader.txt" />
+    <Text Include="resources\shaders\3D\3DTessEvalShader.txt" />
+    <Text Include="resources\shaders\3D\3DVertexShader.txt" />
+    <Text Include="resources\shaders\Terrain\TerrainFragmentShader.txt" />
+    <Text Include="resources\shaders\Terrain\TerrainTessControlShader.txt" />
+    <Text Include="resources\shaders\Terrain\TerrainTessEvalShader.txt" />
+    <Text Include="resources\shaders\Terrain\TerrainVertexShader.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

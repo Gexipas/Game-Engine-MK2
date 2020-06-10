@@ -68,87 +68,33 @@
     <ClInclude Include="Compute.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="HeightTerrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="resources\shaders\cubeFragmentShader.txt">
+    <Text Include="resources\shaders\3D\3DFragmentShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="resources\shaders\cubeVertexShader.txt">
+    <Text Include="resources\shaders\3D\3DTessControlShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="resources\shaders\fogFragmentShader.txt">
+    <Text Include="resources\shaders\3D\3DTessEvalShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="resources\shaders\fogVertexShader.txt">
+    <Text Include="resources\shaders\3D\3DVertexShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="resources\shaders\buttonFragmentShader.txt">
+    <Text Include="resources\shaders\Terrain\TerrainFragmentShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="resources\shaders\buttonVertexShader.txt">
+    <Text Include="resources\shaders\Terrain\TerrainTessControlShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="resources\shaders\3DFragmentShader.txt">
+    <Text Include="resources\shaders\Terrain\TerrainTessEvalShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
-    <Text Include="resources\shaders\3DVertexShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\GrassFragmentShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\GrassGeometryShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\GrassVertexShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ShadowFragmentShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ShadowVertexShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\3DTessControlShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\3DTessEvalShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ShadowTessControlShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ShadowTessEvalShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\GrassTessControlShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\GrassTessEvalShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ClothFragmentShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ClothVertexShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ParticleFragmentShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ParticleGeometryShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ParticleVertexShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\ComputeShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\SnowFragmentShader.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="resources\shaders\SnowVertexShader.txt">
+    <Text Include="resources\shaders\Terrain\TerrainVertexShader.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

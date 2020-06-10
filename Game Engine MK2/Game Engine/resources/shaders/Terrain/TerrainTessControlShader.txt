@@ -1,0 +1,43 @@
+#version 430 core
+
+layout (vertices = 4) out;
+
+in vec2 TexCoord[];
+in vec3 Normal[];
+in vec3 Position[];
+
+out vec2 tcTexCoord[];
+out vec3 tcNormal[];
+out vec3 tcPosition[];
+
+uniform vec3 cameraPos;
+uniform mat4 model;
+
+void main() 
+{
+	tcTexCoord[gl_InvocationID] = TexCoord[gl_InvocationID];
+	tcNormal[gl_InvocationID] = Normal[gl_InvocationID];
+	tcPosition[gl_InvocationID] = Position[gl_InvocationID];
+
+	if (gl_InvocationID == 0) 
+	{
+		float d1 = abs(distance(vec3(model * vec4(Position[0], 1)), cameraPos)); // TL
+		float d2 = abs(distance(vec3(model * vec4(Position[1], 1)), cameraPos)); // BL
+		float d3 = abs(distance(vec3(model * vec4(Position[2], 1)), cameraPos)); // BR
+		float d4 = abs(distance(vec3(model * vec4(Position[3], 1)), cameraPos)); // TR
+
+		float l1 = clamp(-2*d1 + 148, 2.0, 20.0); // TL
+		float l2 = clamp(-2*d2 + 148, 2.0, 20.0); // BL
+		float l3 = clamp(-2*d3 + 148, 2.0, 20.0); // BR
+		float l4 = clamp(-2*d4 + 148, 2.0, 20.0); // TR
+				
+		gl_TessLevelOuter[0] = max(l1,l2); // left
+		gl_TessLevelOuter[1] = max(l1,l4); // top
+		gl_TessLevelOuter[2] = max(l3,l4); // right
+		gl_TessLevelOuter[3] = max(l2,l3); // bot
+
+		float max = max( max(l1,l2),max(l3,l4));
+		gl_TessLevelInner[0] = max;
+		gl_TessLevelInner[1] = max;
+	}
+}

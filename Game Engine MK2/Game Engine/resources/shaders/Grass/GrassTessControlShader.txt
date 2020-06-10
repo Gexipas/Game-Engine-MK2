@@ -1,0 +1,29 @@
+#version 430 core
+
+layout (vertices = 3) out;
+
+in vec3 Normal[];
+in vec3 Position[];
+
+out vec3 tcNormal[];
+out vec3 tcPosition[];
+
+uniform vec3 cameraPos;
+uniform mat4 model;
+
+void main() 
+{
+	tcNormal[gl_InvocationID] = Normal[gl_InvocationID];
+	tcPosition[gl_InvocationID] = Position[gl_InvocationID];
+
+	vec3 p = vec3(model * vec4(Position[gl_InvocationID], 1));
+	float d = abs(distance(p, cameraPos));
+    float lerp = 4.0f*(10.0f/d);
+	lerp = clamp(lerp, 0.0, 4.0);
+
+	gl_TessLevelOuter[0] = lerp;
+	gl_TessLevelOuter[1] = lerp;
+	gl_TessLevelOuter[2] = lerp;
+	gl_TessLevelInner[0] = lerp;	
+	gl_TessLevelInner[1] = lerp;
+}
